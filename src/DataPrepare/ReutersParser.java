@@ -14,7 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * split reuters records into files (GBK encode)将路透社文件（*.sgm）转换成独立的文件
+ * parse reuters record
  * 
  * @author WuyaMony
  * 
