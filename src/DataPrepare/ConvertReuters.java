@@ -22,6 +22,13 @@ import java.util.regex.Pattern;
  */
 public class ConvertReuters {
 
+	private static String temp=null;
+	private static void settemp(String str){
+		 temp=str;
+	}
+	private static String gettemp(){
+		return temp;
+	}
 	/**
 	 * Read file and store the whole content into a string.
 	 * (GBK encode)读取文件所有内容到字符串
@@ -31,11 +38,25 @@ public class ConvertReuters {
 	 * @return (GBK encode)返回的文件字符串
 	 */
 	public static String Read(String filePath) {
-		try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(filePath));
 			StringBuilder sb = new StringBuilder();
 			String text;
-			while ((text = br.readLine()) != null)
+	
+			while ((text = br.readLine()) != null){
+				 String temp;
+				if(text.contains("NEWID")){
+					if(text.contains("CSECS")){ //有些地方多出来这个东西，索引要变
+						temp=text.split(" ")[6];
+					}else {
+						temp=text.split(" ")[5];
+						}			
+					temp=temp.substring(temp.indexOf("=")+2,temp.indexOf(">")-1);//获得newID
+					
+				}
 				sb.append(text + "\n");
+				}
+			
 			return sb.toString();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -47,7 +68,7 @@ public class ConvertReuters {
 
 	/**
 	 * begin conveting,and store the found records into files with the increasing number as file name
-	 * (GBK encode)进行转换 将找到的记录按递增的文件名保存 比如0,1,2,3...
+	 * (GBK encode)进行转换 将找到的记录按递NewId文件名保存 
 	 * 
 	 * @param filePath
 	 *            (GBK encode)输入文件路径 input file path
@@ -60,14 +81,13 @@ public class ConvertReuters {
 		String reuters = "<REUTERS[\\s]*[^>]*>[\\s\\S]+?</REUTERS>";
 		Pattern p = Pattern.compile("(" + reuters + ")+?");
 		Matcher m = p.matcher(str);
-		int i = 0;
 		String find;
 		while (m.find()) {
 			find = m.group();
 			// System.out.println(find=m.group());
 			// System.out.println("########################################");
 			try (BufferedWriter bw = new BufferedWriter(new FileWriter(outDir
-					+ "/" + i++))) {
+					+ "/" + gettemp()+".txt"))) {
 				bw.write(find);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -77,10 +97,18 @@ public class ConvertReuters {
 	}
 
 	public static void main(String[] args) {
-		String test = Read("test/testReuters");
+		File pathin= new File("/home/zzl/reuters_data/");
+		File pathout= new File("/home/zzl/reuters_data_output");
+		String out_path="/home/zzl/reuters_data_output";
 		// String
 		// test="<REUTERS TOPICS=\"NO\" LEWISSPLIT=\"TRAIN\" CGISPLIT=\"TRAINING-SET\" OLDID=\"12555\" NEWID=\"373\"><DATE> 2-MAR-1987 08:38:57.06</DATE></REUTERS>";
-		test += test;
-		Convert("test/testReuters", "test");
+//		Convert("test/1","test");
+
+		File [] listfile = pathin.listFiles();
+		for (File file : listfile) {
+			System.out.println(file.getAbsolutePath());
+			Convert(file.getAbsolutePath(),out_path);	
+		}
+		
 	}
 }
