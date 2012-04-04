@@ -14,7 +14,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * 将路透社文件（*.sgm）转换成独立的文件
+ * split reuters records into  files
+ * (GBK encode)将路透社文件（*.sgm）转换成独立的文件
  * 
  * @author WuyaMony
  * 
@@ -22,11 +23,12 @@ import java.util.regex.Pattern;
 public class ConvertReuters {
 
 	/**
-	 * 读取文件所有内容到字符串
+	 * Read file and store the whole content into a string.
+	 * (GBK encode)读取文件所有内容到字符串
 	 * 
 	 * @param filePath
-	 *            文件路径
-	 * @return 返回的文件字符串
+	 *            (GBK encode)文件路径
+	 * @return (GBK encode)返回的文件字符串
 	 */
 	public static String Read(String filePath) {
 		try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
@@ -44,12 +46,13 @@ public class ConvertReuters {
 	}
 
 	/**
-	 * 进行转换 将找到的记录按递增的文件名保存 比如0,1,2,3...
+	 * begin conveting,and store the found records into files with the increasing number as file name
+	 * (GBK encode)进行转换 将找到的记录按递增的文件名保存 比如0,1,2,3...
 	 * 
 	 * @param filePath
-	 *            输入文件路径
+	 *            (GBK encode)输入文件路径 input file path
 	 * @param outDir
-	 *            输出目录
+	 *            (GBK encode)输出目录 output folder
 	 */
 	public static void Convert(String filePath, String outDir) {
 		String str = Read(filePath);
