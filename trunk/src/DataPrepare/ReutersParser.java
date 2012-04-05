@@ -34,7 +34,7 @@ public class ReutersParser {
 	
 	public static void main(String[] args) {
 		//example
-		ReutersParser rp=new ReutersParser("test/testReuters");
+		ReutersParser rp=new ReutersParser("D:\\WorkRelevant\\Project\\Êý¾ÝÍÚ¾ò\\reuters21578\\reut2-020.sgm");
 		ParseResult p=null;
 		while((p=rp.next())!=null){
 			System.out.println("NewID="+p.newid+"\ntopics="+p.topics+"\nlewissplit="+p.lewissplit+"\ntitle="+p.title+"\nbody="+p.body);
@@ -66,15 +66,19 @@ public class ReutersParser {
 				continue;
 			}else{
 				String _topics=tmp.group(1);
-				tmp=title.matcher(find);tmp.find();
+				tmp=title.matcher(find);
+				if(!tmp.find())continue;
 				String _title=tmp.group(1);
-				tmp=body.matcher(find);tmp.find();
+				tmp=body.matcher(find);
+				if(!tmp.find())continue;
 				String _body=tmp.group(1);
 				//get attributes of reuters field
 				String attr=m.group(2);
-				tmp=lewissplit.matcher(attr);tmp.find();
+				tmp=lewissplit.matcher(attr);
+				if(!tmp.find())continue;
 				String _lewissplit=tmp.group(1);
-				tmp=newid.matcher(attr);tmp.find();
+				tmp=newid.matcher(attr);
+				if(!tmp.find())continue;
 				String _newid=tmp.group(1);
 				return new ParseResult(_topics, _lewissplit, _newid, _title, _body);
 			}
