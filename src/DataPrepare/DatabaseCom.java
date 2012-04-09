@@ -8,7 +8,7 @@ import java.sql.SQLException;
 public class DatabaseCom {
 	private Connection con;
 
-	public void Getconnection() {
+	public Connection Getconnection() {
 
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -26,5 +26,6 @@ public class DatabaseCom {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return con;
 	}
 }
