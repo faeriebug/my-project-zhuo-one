@@ -32,17 +32,40 @@ public class ReutersParser {
 		m=reuters.matcher(Read(filePath));
 	}
 	
-	public static void main(String[] args) {
-		//example
-		ReutersParser rp=new ReutersParser("D:\\WorkRelevant\\Project\\数据挖掘\\reuters21578\\reut2-020.sgm");
-		ParseResult p=null;
-		while((p=rp.next())!=null){
-			System.out.println("NewID="+p.newid+"\ntopics="+p.topics+"\nlewissplit="+p.lewissplit+"\ntitle="+p.title+"\nbody="+p.body);
-			System.out.println("##############################################################");
-		}
+//	public static void main(String[] args) {
+//		//example
+//
+//		String out_path = "/home/zzl/reuters_data_output";
+//		File pathin = new File("/home/zzl/reuters_data/");
+//		
+//		File[] listfile = pathin.listFiles();
+//		
+//		for (File file : listfile) {
+//			System.out.println(file.getAbsolutePath());
+//			ParseResult p=null;
+//			ReutersParser rp=new ReutersParser(file.getAbsolutePath()); 
+//			int i=0;
+//			while((p=rp.next())!=null){
+//
+////		ReutersParser rp=new ReutersParser("D:\\WorkRelevant\\Project\\数据挖掘\\reuters21578\\reut2-020.sgm");
+////		ParseResult p=null;
+////		while((p=rp.next())!=null){
+//
+//			System.out.println("NewID="+p.newid+"\ntopics="+p.topics+"\nlewissplit="+p.lewissplit+"\ntitle="+p.title+"\nbody="+p.body);
+//			System.out.println("##############################################################");
+//			System.out.println(i);
+//			i++;
+//			}
+//		}
+		
+//		ParseResult p=null;
+//		while((p=rp.next())!=null){
+////			System.out.println("NewID="+p.newid+"\ntopics="+p.topics+"\nlewissplit="+p.lewissplit+"\ntitle="+p.title+"\nbody="+p.body);
+////			System.out.println("##############################################################");
+//		}
 //		File pathin = new File("/home/zzl/reuters_data/");
 //		File pathout = new File("/home/zzl/reuters_data_output");
-//		String out_path = "/home/zzl/reuters_data_output";
+
 //		// String
 //		// test="<REUTERS TOPICS=\"NO\" LEWISSPLIT=\"TRAIN\" CGISPLIT=\"TRAINING-SET\" OLDID=\"12555\" NEWID=\"373\"><DATE> 2-MAR-1987 08:38:57.06</DATE></REUTERS>";
 //		// Convert("test/1","test");
@@ -52,7 +75,7 @@ public class ReutersParser {
 //			System.out.println(file.getAbsolutePath());
 //			Parse(file.getAbsolutePath());
 //		}
-	}
+//	}
 	
 	/**
 	 * returns the next "Reuters Record" or null if no more reuters record.
