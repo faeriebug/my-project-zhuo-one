@@ -30,8 +30,8 @@ class DataExtrationToDatabase {
 | Body  | varchar(4096) | YES  |     | NULL    |       |
 +-------+---------------+------+-----+---------+-------+
 		 * */
-		String sql1 ="";
-		String sql2 ="";
+		String sql1 ="insert into Test_set(NewID)";
+		String sql2 ="update Test_set set NewID";
 		
 	
 	}
