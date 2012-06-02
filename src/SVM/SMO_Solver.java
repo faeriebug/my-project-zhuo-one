@@ -14,6 +14,15 @@ import java.util.StringTokenizer;
  * 
  */
 public class SMO_Solver {
+	private class node {
+		int d;// 维数
+		double value;// 值
+		public node(int d,double value){
+			this.d=d;
+			this.value=value;
+		}
+	}
+
 	int N, d, train_num, first_test_i;// 训练数据数目
 	double C, tolerance, two_sigma_squared, eps;
 	double alph[];// 拉格朗日乘子
@@ -21,7 +30,7 @@ public class SMO_Solver {
 	double b;
 	private double[] error_cache;// 存放non-bound样本误差
 	private double[] self_dot_product;// 预存dot_product_func(i,i)的值，以减少计算量
-	private double[][] dense_points;// 存放训练与测试样本，0～train_num-1训练；train_num～N-1测试
+	private node[][] dense_points;// 稀疏矩阵，存放训练与测试样本，0～train_num-1训练；train_num～N-1测试
 
 	double learned_func_nonlinear(int k) {
 		double sum = 0;
@@ -47,8 +56,14 @@ public class SMO_Solver {
 
 	double dot_product_func(int i, int k) {
 		double dot = 0;
+		int di = 0, dk = 0;
 		for (int j = 0; j < d; j++)
-			dot += dense_points[i][j] * dense_points[k][j];
+			if (dense_points[i][di].d == j && dense_points[k][dk].d == j) {
+				dot += dense_points[i][di].value * dense_points[k][dk].value;
+				di++;
+				dk++;
+			}
+
 		return dot;
 	}
 
@@ -61,7 +76,7 @@ public class SMO_Solver {
 	boolean takeStep(int i1, int i2) {
 		int y1, y2, s;
 		double delta_b;
-		double alph1, alph2=0; // * old_values of alpha_1, alpha_2
+		double alph1, alph2 = 0; // * old_values of alpha_1, alpha_2
 		double a1, a2; // * new values of alpha_1, alpha_2
 		double E1, E2, L, H, k11, k22, k12, eta, Lobj, Hobj;
 
@@ -277,7 +292,7 @@ public class SMO_Solver {
 
 	// 3：如果上面也失败，则从随机位置查找整个样本,(改为bound样本)
 	boolean examineBound(int i1) {
-		int k, k0 = (new Random()).nextInt() % train_num;
+		int k, k0 = (new Random()).nextInt(train_num);
 		int i2;
 		for (k = 0; k < train_num; k++) {
 			i2 = (k + k0) % train_num; // 从随机位开始
@@ -298,7 +313,6 @@ public class SMO_Solver {
 			tar = learned_func_nonlinear(i);
 			if (tar > 0 && target[i] > 0 || tar < 0 && target[i] < 0)
 				ac++;
-			// cout<<"The "<<i - train_num + 1<<"th test value is  "<<tar<<endl;
 		}
 		accuracy = (double) ac / (N - train_num);
 		System.out.println("精确度：" + accuracy * 100 + "％");
@@ -312,11 +326,12 @@ public class SMO_Solver {
 			String line;
 			while ((line = br.readLine()) != null) {
 				StringTokenizer st = new StringTokenizer(line, " \t\n\r\f:");
-				target[i]=Integer.valueOf(st.nextToken());
+				target[i] = Integer.valueOf(st.nextToken());
 				int m = st.countTokens() / 2;
+				dense_points[i]=new node[m];
 				for (int j = 0; j < m; j++) {
 					int dim = Integer.valueOf(st.nextToken());
-					dense_points[i][dim-1] = Double.valueOf(st.nextToken());
+					dense_points[i][j] = new node(dim,Double.valueOf(st.nextToken()));
 				}
 				i++;
 			}
@@ -327,18 +342,18 @@ public class SMO_Solver {
 
 	// 初始化
 	void initialize() {
-		N=270;
+		N = 270;
 		d = 13;
 		C = 1;
 		tolerance = 0.001;
 		two_sigma_squared = 2;
 		first_test_i = 0;
-		train_num = N*2/3;
+		train_num = N * 2 / 3;
 		eps = 1e-12;
 		b = 0;
 		target = new int[N];
-		dense_points = new double[N][d];
-		alph=new double[train_num];
+		dense_points = new node[N][];
+		alph = new double[train_num];
 		error_cache = new double[train_num];
 		self_dot_product = new double[N];
 		set(); // 设置目标值向量和样本值矩阵
@@ -346,66 +361,61 @@ public class SMO_Solver {
 			// 设置预计算点积（对训练样本的设置，对于测试样本也要考虑）
 			self_dot_product[i] = dot_product_func(i, i);
 	}
-	
-	//主函数*************************************************** 
-	void  mainRoutine()
-	{
-		int i,k;
+
+	// 主函数***************************************************
+	void mainRoutine() {
+		int i, k;
 		double tm;
-//		clock_t start,finish;
-		int numChanged = 0;  //number of alpha[i], alpha[j] pairs changed in a single step in the outer loop
-		int examineAll = 1;  //flag indicating whether the outer loop has to be made on all the alpha[i]
-//		srand((unsigned)time(NULL));
-//		start = clock();
-		initialize();  //初始化 
+		// clock_t start,finish;
+		int numChanged = 0; // number of alpha[i], alpha[j] pairs changed in a
+							// single step in the outer loop
+		int examineAll = 1; // flag indicating whether the outer loop has to be
+							// made on all the alpha[i]
+		initialize(); // 初始化
 		/*
-		以下两层循环，开始时检查所有样本，选择不符合KKT条件的两个乘子进行优化，选择成功，返回1，否则，返回0 
-		所以成功了，numChanged必然大于0，从第二遍循环时，就不从整个样本中去寻找不符合KKT条件的两个乘子进行优化，
-		而是从边界的乘子中去寻找，因为非边界样本需要调整的可能性更大，边界样本往往不被调整而始终停留在边界上。
-		如果，没找到，再从整个样本中去找，直到整个样本中再也找不到需要改变的乘子为止，此时，算法结束。
-		*/
-		while(numChanged > 0 || examineAll == 1)
-		{
+		 * 以下两层循环，开始时检查所有样本，选择不符合KKT条件的两个乘子进行优化，选择成功，返回1，否则，返回0
+		 * 所以成功了，numChanged必然大于0，从第二遍循环时，就不从整个样本中去寻找不符合KKT条件的两个乘子进行优化，
+		 * 而是从边界的乘子中去寻找，因为非边界样本需要调整的可能性更大，边界样本往往不被调整而始终停留在边界上。
+		 * 如果，没找到，再从整个样本中去找，直到整个样本中再也找不到需要改变的乘子为止，此时，算法结束。
+		 */
+		while (numChanged > 0 || examineAll == 1) {
 			numChanged = 0;
-			if(examineAll == 1)
-			{
-				for(k = 0; k < train_num; k++)
-					numChanged += examineExample(k);  //检查所有样本 
+			if (examineAll == 1) {
+				for (k = 0; k < train_num; k++)
+					numChanged += examineExample(k); // 检查所有样本
+			} else {
+				for (k = 0; k < train_num; k++)
+					if (alph[k] != 0 && alph[k] != C)
+						numChanged += examineExample(k); // 寻找所有非边界样本的lagrange乘子
 			}
-			else
-			{
-				for(k = 0; k < train_num; k++)
-					if(alph[k] != 0 && alph[k] != C)
-						numChanged += examineExample(k);  //寻找所有非边界样本的lagrange乘子 
-			}
-			if(examineAll == 1)   examineAll = 0;
-			else if(numChanged==0)   examineAll = 1;
+			if (examineAll == 1)
+				examineAll = 0;
+			else if (numChanged == 0)
+				examineAll = 1;
 		}
-		//存放训练后的参数 
-		System.out.println("----------------------------参数输出------------------------------");
-		System.out.println("sample number N = "+N);
-		System.out.println("train_num = "+train_num);
-		System.out.println("test_num = "+(N - train_num)); 
-		System.out.println("dimension d = "+d);
-		System.out.println("Threshold b = "+b);
-		System.out.println("RBF kernel function's parameter two_sigma_squared = "+two_sigma_squared);
+		// 存放训练后的参数
+		System.out
+				.println("----------------------------参数输出------------------------------");
+		System.out.println("sample number N = " + N);
+		System.out.println("train_num = " + train_num);
+		System.out.println("test_num = " + (N - train_num));
+		System.out.println("dimension d = " + d);
+		System.out.println("Threshold b = " + b);
+		System.out
+				.println("RBF kernel function's parameter two_sigma_squared = "
+						+ two_sigma_squared);
 		int support_vectors = 0;
-		for(i = 0; i < train_num; i++)
-		{
-			if(alph[i] > 0 && alph[i] <= C)
-			{
+		for (i = 0; i < train_num; i++) {
+			if (alph[i] > 0 && alph[i] <= C) {
 				support_vectors++;
 			}
 		}
-		System.out.println("support_vectors = "+support_vectors);
-		error_rate();  //测试 
-//		finish = clock();
-//		tm = (double)(finish - start) / CLOCKS_PER_SEC;
-//		cout<<"The time cost: "<<tm<<" s."<<endl;
-//		system("pause");
+		System.out.println("support_vectors = " + support_vectors);
+		error_rate(); // 测试
 	}
-	public static void main(String[]args){
-		SMO_Solver ss=new SMO_Solver();
+
+	public static void main(String[] args) {
+		SMO_Solver ss = new SMO_Solver();
 		ss.mainRoutine();
 	}
 }
