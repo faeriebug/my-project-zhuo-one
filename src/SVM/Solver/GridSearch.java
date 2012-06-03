@@ -1,4 +1,4 @@
-package SVM;
+package SVM.Solver;
 
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedQueue;
