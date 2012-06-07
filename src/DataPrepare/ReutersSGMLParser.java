@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
  * @author WuyaMony
  * 
  */
-public class ReutersParser {
+public class ReutersSGMLParser {
 	private static final Pattern reuters=Pattern.compile("(<REUTERS[\\s]*([^>]*)>([\\s\\S]+?)</REUTERS>)+?");;
 	private static final Pattern topics=Pattern.compile("<TOPICS>([\\s\\S]+?)</TOPICS>");
 	private static final Pattern title=Pattern.compile("<TITLE>([\\s\\S]+?)</TITLE>");
@@ -28,7 +28,7 @@ public class ReutersParser {
 	private static final Pattern newid=Pattern.compile("NEWID=\"([^\"]+)\"");
 	private Matcher m=null;
 	
-	public ReutersParser(String filePath){
+	public ReutersSGMLParser(String filePath){
 		m=reuters.matcher(Read(filePath));
 	}
 	

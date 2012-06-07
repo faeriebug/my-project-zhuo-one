@@ -65,7 +65,7 @@ class DataExtrationToDatabase {
 		int count_file = 0;
 		int count = 0;
 		for (File file : listfile) {
-			ReutersParser rp = new ReutersParser(file.getAbsolutePath());
+			ReutersSGMLParser rp = new ReutersSGMLParser(file.getAbsolutePath());
 
 			while ((p = rp.next()) != null) {
 				if(p.lewissplit.equalsIgnoreCase("test")){

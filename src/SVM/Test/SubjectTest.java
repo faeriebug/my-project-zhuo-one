@@ -53,8 +53,8 @@ public class SubjectTest {
 					String[] argv;
 					SMO_Solver ss = new SMO_Solver();
 						
-					ss.ReadProblem();
-					ss.mainRoutine(0.125,8.0);
+					ss.ReadTrainProblemForTrainning("heart_scale");
+					ss.Train(0.125,8.0);
 					argv=new String[]{"Test\\SubjectTest\\Result\\TestFiles","Test\\SubjectTest\\Result\\CategoriedFiles.model","Test\\SubjectTest\\Result\\TestFiles.out"};
 //								System.out.println("->finished");
 //								System.out.printf("\t%s--%d--%s:  %d/%d,%.2f%%\n\n", FS.getName(),wNr,FC.getName(),tmp[0],tmp[1],100.0*tmp[0]/tmp[1]);
