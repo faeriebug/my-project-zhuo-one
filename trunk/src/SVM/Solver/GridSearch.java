@@ -71,12 +71,12 @@ public class GridSearch {
 	
 	
 	private  double trainAccuracy(double c,double g)throws Exception{
-		return ss.mainRoutine(c, g);
+		return ss.TrainWithCrossValidation(c, g);
 	}
 	
 	public  double[] ParameterSelection(){
 		// put jobs in queue
-		ss.ReadProblem();
+		ss.ReadTrainProblemForTrainning("heart_scale");
 		ConcurrentLinkedQueue<double[]> job_queue = calculate_jobs();
 		ConcurrentLinkedQueue<double[]> result_queue=new ConcurrentLinkedQueue<double[]>();
 		// fire local workers
