@@ -30,27 +30,33 @@ class DataExtrationToDatabase {
 | Body  | varchar(4096) | YES  |     | NULL    |       |
 +-------+---------------+------+-----+---------+-------+
 		 * */
-		String sql1 ="insert into Test_set values("+NewID+","+Topic+","+Title+","+body+")";
-		//String sql1 ="insert into Test_set values(?,?,?,?)";
+
+		
+		String sql1 ="insert into Test_set values(?,?,?,?)";
 		String sql2 ="update Test_set set Topic=? where NewId=?";
 		String sql3 ="update Test_set set Title=? where NewId=?";
 		String sql4 ="update Test_set set Body=? where NewId=?";
+
 		
-		String sq5 ="select NewId from Test_set where NewId=?";
-		String sq6 ="select Topic from Test_set where Topic=?";
-		String sq7 ="select Title from Test_set where Title=?";
-		String sq8 ="select Body from Test_set where Body=?";
+		String sq6 ="select Topic from Test_set where NewId=?";
+		String sq7 ="select Title from Test_set where NewId=?";
+		String sq8 ="select Body from Test_set where NewId=?";
 		
-		String sql9 ="insert into Train_set values("+NewID+","+Topic+","+Title+","+body+")";
-		//String sql1 ="insert into Train_set values(?,?,?,?)";
+		
+		String sql9 ="insert into Train_set values(?,?,?,?)";
 		String sql10 ="update Train_set set Topic=? where NewId=?";
 		String sql11 ="update Train_set set Title=? where NewId=?";
 		String sql12 ="update Train_set set Body=? where NewId=?";
 		
-		String sq13 ="select NewId from Train_set where NewId=?";
-		String sq14 ="select Topic from Train_set where Topic=?";
-		String sq15 ="select Title from Train_set where Title=?";
-		String sq16 ="select Body from Train_set where Body=?";
+
+		String sq14 ="select Topic from Train_set where NewId=?";
+		String sq15 ="select Title from Train_set where NewId=?";
+		String sq16 ="select Body from Train_set where NewId=?";
+		
+		
+		
+		
+
 	
 	}
 

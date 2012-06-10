@@ -6,13 +6,13 @@ import java.sql.SQLException;
 
 //initailize data
 public class DatabaseCom {
-	private Connection con;
+	public Connection con;
 
 	public Connection Getconnection() {
 
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			con = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/datamining?user=root&password=database");
+			con = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/datamining?user=root&password=111111");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
