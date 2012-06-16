@@ -40,6 +40,7 @@ public class Test {
 		// read some text in the text variable
 		String text = "The Stanford NLP Group makes parts of our Natural Language Processing software available to the public. These are statistical NLP toolkits for various major computational linguistics problems. They can be incorporated into applications with human language technology needs."; // Add
 		// create an empty Annotation just with the given text
+		//÷–Œƒ◊¢ Õ≤‚ ‘
 		Annotation document = new Annotation(text);
 		// run all Annotators on this text
 		pipeline.annotate(document);
