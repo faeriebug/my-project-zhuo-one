@@ -15,7 +15,7 @@ public class SubjectFeatureCounter implements FeatureCounter {
 	@Override
 	public Map<String,Integer> Count(Map<String, Integer> dic, String text) {
 		// TODO Auto-generated method stub
-		SubjectFeatureMaker SF=new SubjectFeatureMaker(dic);
+		SubjectFeatureMaker SF=new SubjectFeatureMaker();
 		String[] features=SF.getFeatureFromDoc(text);//带有重复的特征，频数为1；
 		//接下来，要进行频数统计，考虑是否进行合并处理还是，直接传出所有特征，外部合并计算
 		//合并处理

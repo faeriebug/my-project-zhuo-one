@@ -67,7 +67,7 @@ public class ChiSqrWordSelection  extends FeatureSelection{
 	 * @param k 选取的特征词数量
 	 */
 	public void ChiSqrFSAvg(String dicPath,String libPath,String resultFilePath,int k){
-		TrainingDataManager TDM=new TrainingDataManager(new SubjectFeatureMaker("Test\\dictionary.txt"), libPath);
+		TrainingDataManager TDM=new TrainingDataManager(new SubjectFeatureMaker(), libPath);
 		Map<String, int[]> mp=TDM.getMap();
 		try{
 			FileWriter fw=new FileWriter(resultFilePath);
@@ -109,7 +109,7 @@ public class ChiSqrWordSelection  extends FeatureSelection{
 	 * @param k 选取的特征词数量
 	 */
 	public void ChiSqrFSMax(String dicPath,String libPath,String resultFilePath,int k){
-		TrainingDataManager TDM=new TrainingDataManager(new SubjectFeatureMaker("Test\\dictionary.txt"), libPath);
+		TrainingDataManager TDM=new TrainingDataManager(new SubjectFeatureMaker(), libPath);
 		Map<String, int[]> mp=TDM.getMap();
 		try{
 			FileWriter fw=new FileWriter(resultFilePath);
@@ -274,7 +274,7 @@ private double CalChiSquareValue(double N11,double N10,double N01,double N00){
 		long start=System.currentTimeMillis();
 		
 		//DFWS.GlobalDFFS("Test\\dictionary.txt","TanCorpMinTrain\\","Test\\FeatureDictionary.txt",500);
-		CSWS.ConstructFeatureDictionary(new SubjectFeatureMaker("Test\\dictionary.txt"),"TrainingData\\","Test\\FeatureDictionary.txt",5000);
+		CSWS.ConstructFeatureDictionary(new SubjectFeatureMaker(),"TrainingData\\","Test\\FeatureDictionary.txt",5000);
 //		CSWS.ConstructFeatureDictionary(new SemanticFeatureMaker(new SentiDictionary()),"TrainingData\\","Test\\FeatureDictionary.txt",5000);
 		long end=System.currentTimeMillis();
 		System.out.println("程序执行："+(end-start)/1000.0+"s");
