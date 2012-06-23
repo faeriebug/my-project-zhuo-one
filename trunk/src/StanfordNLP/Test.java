@@ -34,7 +34,7 @@ public class Test {
 		Properties props = new Properties();
 		// props.put("annotators",
 		// "tokenize, ssplit, pos, lemma, ner, parse, dcoref");
-		props.put("annotators", "tokenize, ssplit, pos, lemma");
+		props.put("annotators", "tokenize, ssplit,pos, lemma");
 		System.err.close();
 		StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 		// read some text in the text variable
@@ -44,16 +44,15 @@ public class Test {
 		Annotation document = new Annotation(text);
 		// run all Annotators on this text
 		pipeline.annotate(document);
-
 		// these are all the sentences in this document
 		// a CoreMap is essentially a Map that uses class objects as keys and
 		// has values with custom types
-		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
-
-		for (CoreMap sentence : sentences) {
+//		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
+//		List<CoreLabel> sentences = ;
+//		for (CoreMap sentence : sentences) {
 			// traversing the words in the current sentence
 			// a CoreLabel is a CoreMap with additional token-specific methods
-			for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
+			for (CoreLabel token : document.get(TokensAnnotation.class)) {
 				// this is the text of the token
 				String word = token.get(TextAnnotation.class);
 				// this is the POS tag of the token
@@ -72,7 +71,7 @@ public class Test {
 			// // this is the Stanford dependency graph of the current sentence
 			// SemanticGraph dependencies = sentence
 			// .get(CollapsedCCProcessedDependenciesAnnotation.class);
-		}
+//		}
 
 		// This is the coreference link graph
 		// Each chain stores a set of mentions that link to each other,

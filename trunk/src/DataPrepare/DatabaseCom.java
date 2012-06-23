@@ -12,7 +12,7 @@ public class DatabaseCom {
 
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			con = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/datamining?user=root&password=111111");
+			con = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/datamining?user=root&password=123");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

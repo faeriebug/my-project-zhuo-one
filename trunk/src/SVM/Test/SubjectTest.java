@@ -29,7 +29,7 @@ public class SubjectTest {
 		double count=0,total=FeatureDictionary.length*TrainingFeaturesCalc.length*wordNum.length;
 		long start,end;
 		double timepast=0,timeneed=0;
-		SubjectFeatureMaker SF=new SubjectFeatureMaker("Test\\SubjectTest\\Result\\dictionary.txt");
+		SubjectFeatureMaker SF=new SubjectFeatureMaker();
 		SubjectFeatureCounter SFC=new SubjectFeatureCounter();
 		for(FeatureSelection FS:FeatureDictionary){
 			for(int wNr:wordNum){

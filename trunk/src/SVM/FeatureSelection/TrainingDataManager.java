@@ -154,14 +154,7 @@ public class TrainingDataManager{
 		}
 		return ret;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
+
 	/**
 	 * @param args
 	 */
