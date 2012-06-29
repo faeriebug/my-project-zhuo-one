@@ -1,6 +1,9 @@
 package DataPrepare;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
@@ -40,18 +43,15 @@ public class GetWhatwewant {
 		}
 	}
 
-	void process() throws DocumentException, SQLException {
+	void process() throws DocumentException, SQLException, IOException {
 
 		SAXReader saxReader = new SAXReader();
 		DatabaseCom dbcom = new DatabaseCom();
-		dbcom.Getconnection();
 		int count_Test = 0, count_train = 0;
-		int Test_id = 1, Train_id = 1;
-		String sql1 = "INSERT INTO Test_set (NewId,Topic,Title,Body) values (?,?,?,?)";
-		String sql2 = "INSERT INTO Train_set (NewId,Topic,Title,Body) values (?,?,?,?)";
-		java.sql.PreparedStatement pre_Test = dbcom.con.prepareStatement(sql1);
-		java.sql.PreparedStatement pre_Train = dbcom.con.prepareStatement(sql2);
-
+		int Test_id_acq = 1,Test_id_wheat=1, Train_id_wheat = 1, Train_id_acq=1;
+		
+		String Destination ="FileFormatResult";
+		
 		File[] xmlFilelist = xmlFile.listFiles();
 		int count = 0;
 		for (File F : xmlFilelist) {
@@ -71,6 +71,7 @@ public class GetWhatwewant {
 
 				Iterator iterText = element2.elementIterator("TITLE");
 				Iterator iterbODY = element2.elementIterator("BODY");
+				StringBuilder std=new StringBuilder();
 				if (DateIter.hasNext()) {
 					Element eleDate = (Element) DateIter.next();
 					String date = eleDate.getStringValue().trim().split(" ")[0];
@@ -100,22 +101,40 @@ public class GetWhatwewant {
 						} else {
 							body = "";
 						}
-						pre_Train.setInt(1, Train_id);
-						pre_Train.setString(2, topic);
-						pre_Train.setString(3, title);
-						pre_Train.setString(4, body);
+
 						if (eleTopic.getStringValue().equalsIgnoreCase("acq")) {
 							System.out.println("acq");
-							pre_Train.executeUpdate();
-							Train_id++;
+							std.append(title);
+							std.append("\n");
+							std.append(topic);
+							std.append("\n");
+							std.append(body);
+							File acqfile=new File("FileFormatResult/Train/acq/"+Train_id_acq);
+							BufferedWriter bw= new BufferedWriter(new FileWriter(acqfile));
+							bw.write(std.toString());
+							bw.flush();
+							bw.close();
+							
+							Train_id_acq++;
 						}
 						if (eleTopic.getStringValue().contains("wheat")) {
 							System.out.println("wheat");
-							pre_Train.executeUpdate();
-							Train_id++;
+							std.append(title);
+							std.append("\n");
+							std.append("wheat");
+							std.append("\n");
+							std.append(body);
+							File wheatfile=new File("FileFormatResult/Train/wheat/"+Train_id_wheat);
+							BufferedWriter bw= new BufferedWriter(new FileWriter(wheatfile));
+							bw.write(std.toString());
+							bw.flush();
+							bw.close();
+							Train_id_wheat++;
 						}
 
 						System.out.println("Train:" + count_train);
+						System.out.println("Train_id_wheat:"+Train_id_wheat);
+						System.out.println("Train_id_acq:"+Train_id_acq);
 						count_train++;
 
 					} else {// ≤‚ ‘ºØ
@@ -137,22 +156,41 @@ public class GetWhatwewant {
 						} else {
 							body = "";
 						}
-						pre_Test.setInt(1, Test_id);
-						pre_Test.setString(2, topic);
-						pre_Test.setString(3, title);
-						pre_Test.setString(4, body);
+
 						if (eleTopic.getStringValue().equalsIgnoreCase("acq")) {
 							System.out.println("acq");
-							pre_Test.executeUpdate();
-							Test_id++;
+							std.append(title);
+							std.append("\n");
+							std.append(topic);
+							std.append("\n");
+							std.append(body);
+							File acqfile=new File("FileFormatResult/Test/acq/"+Test_id_acq);
+							BufferedWriter bw= new BufferedWriter(new FileWriter(acqfile));
+							bw.write(std.toString());
+							bw.flush();
+							bw.close();
+							
+							Test_id_acq++;
 
 						}
 						if (eleTopic.getStringValue().contains("wheat")) {
 							System.out.println("wheat");
-							pre_Test.executeUpdate();
-							Test_id++;
+							std.append(title);
+							std.append("\n");
+							std.append("wheat");
+							std.append("\n");
+							std.append(body);
+							File wheatfile=new File("FileFormatResult/Test/wheat/"+Test_id_wheat);
+							BufferedWriter bw= new BufferedWriter(new FileWriter(wheatfile));
+							bw.write(std.toString());
+							bw.flush();
+							bw.close();
+							Test_id_wheat++;
+						
 						}
 						System.out.println("Test:" + count_Test);
+						System.out.println("Test_id_wheat:"+Test_id_wheat);
+						System.out.println("Test_id_acq:"+Test_id_acq);
 						count_Test++;
 					}
 					count++;
@@ -168,9 +206,10 @@ public class GetWhatwewant {
 	 * @param args
 	 * @throws DocumentException
 	 * @throws SQLException
+	 * @throws IOException 
 	 */
 	public static void main(String[] args) throws DocumentException,
-			SQLException {
+			SQLException, IOException {
 		// TODO Auto-generated method stub
 		GetWhatwewant hehe = new GetWhatwewant("reuterxml");
 		hehe.process();
