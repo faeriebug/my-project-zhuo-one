@@ -8,7 +8,6 @@ import java.util.StringTokenizer;
 
 /**
  * 使用SMO算法解SVM
- * 
  * @author WuyaMony
  * 
  */
