@@ -61,12 +61,12 @@ public class SubjectTest {
 					System.out.println("->finished");
 
 					// argv=new
-										// String[]{"Test\\SubjectTest\\Result\\TestFiles","Test\\SubjectTest\\Result\\CategoriedFiles.model","Test\\SubjectTest\\Result\\TestFiles.out"};
-										// System.out.println("->finished");
-										// System.out.printf("\t%s--%d--%s:  %d/%d,%.2f%%\n\n",
-										// FS.getName(),wNr,FC.getName(),tmp[0],tmp[1],100.0*tmp[0]/tmp[1]);
-										// fileWriter.write(FS.getName()+"+"+wNr+"+"+FC.getName()+"+"+tmp[0]+"/"+tmp[1]+"+"+(100.0*tmp[0]/tmp[1])+"\n");
-					int[] tmp=null;
+					// String[]{"Test\\SubjectTest\\Result\\TestFiles","Test\\SubjectTest\\Result\\CategoriedFiles.model","Test\\SubjectTest\\Result\\TestFiles.out"};
+					// System.out.println("->finished");
+					// System.out.printf("\t%s--%d--%s:  %d/%d,%.2f%%\n\n",
+					// FS.getName(),wNr,FC.getName(),tmp[0],tmp[1],100.0*tmp[0]/tmp[1]);
+					// fileWriter.write(FS.getName()+"+"+wNr+"+"+FC.getName()+"+"+tmp[0]+"/"+tmp[1]+"+"+(100.0*tmp[0]/tmp[1])+"\n");
+					int[] tmp = null;
 					try {
 						GridSearch gs = new GridSearch();
 						System.out.print("\t>>Grid search");
@@ -104,14 +104,17 @@ public class SubjectTest {
 	 */
 	public static void main(String[] args) {
 		// 构建特征词典的类数组
-		FeatureSelection[] FeatureDictionary = new FeatureSelection[] { new GlobalDFWordSelection() };
+		FeatureSelection[] FeatureDictionary = new FeatureSelection[] {
+				new ChiSqrWordSelection(),
+				new InformationGainWordSelection(), new LocalDFWordSelection() };
 		// 计算训练语料库特征向量的类数组
-		FeatureWeight[] TrainingFeaturesCalc = new FeatureWeight[] { new TF_IDFWeighting()};
+		FeatureWeight[] TrainingFeaturesCalc = new FeatureWeight[] { new TF_IDFWeighting(),new LTCWeighting(), new TFCWeighting(),new TFWeighting(),};
 		// //计算测试语料特征向量的类数组
 		// FeatureWeight[] TestingFeatureCalc=new FeatureWeight[]{new
 		// TFCWeighting(),new TFWeighting()};
 		// 特征词选择的数量
-		int[] wordNum = new int[] { 1000 };
+		int[] wordNum = new int[] { 500, 1000, 1500, 2000, 2500, 3000, 3500,
+				4000 };
 
 		SubjectTest AT = new SubjectTest(FeatureDictionary,
 				TrainingFeaturesCalc, wordNum);

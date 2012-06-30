@@ -156,7 +156,8 @@ public class GridSearch {
 
 	public static void main(String[]args){
 		GridSearch gs=new GridSearch();
-		double[] re=gs.ParameterSelection("heart_scale");
+//		double[] re=gs.ParameterSelection("heart_scale");
+		double[] re=gs.ParameterSelection("ClsTest\\Result\\CategoriedFiles");
 		System.out.println("c="+re[0]+" g="+re[1]+" rate="+re[2]);
 	}
 	
