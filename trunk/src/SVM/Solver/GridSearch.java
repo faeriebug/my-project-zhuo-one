@@ -74,9 +74,11 @@ public class GridSearch {
 		return ss.TrainWithCrossValidation(c, g);
 	}
 	
-	public  double[] ParameterSelection(){
+	public  double[] ParameterSelection(String filepath){
 		// put jobs in queue
-		ss.ReadTrainProblemForTrainning("heart_scale");
+		System.out.println("start read problem");
+		ss.ReadTrainProblemForTrainning(filepath);
+		System.out.println("finish read problem");
 		ConcurrentLinkedQueue<double[]> job_queue = calculate_jobs();
 		ConcurrentLinkedQueue<double[]> result_queue=new ConcurrentLinkedQueue<double[]>();
 		// fire local workers
@@ -154,7 +156,7 @@ public class GridSearch {
 
 	public static void main(String[]args){
 		GridSearch gs=new GridSearch();
-		double[] re=gs.ParameterSelection();
+		double[] re=gs.ParameterSelection("heart_scale");
 		System.out.println("c="+re[0]+" g="+re[1]+" rate="+re[2]);
 	}
 	

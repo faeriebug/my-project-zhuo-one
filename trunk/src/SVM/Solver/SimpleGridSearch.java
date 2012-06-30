@@ -13,8 +13,8 @@ public class SimpleGridSearch {
 		ss=new SMO_Solver();
 	}
 	
-	public double[] StartGridSearch(){
-		ss.ReadTrainProblemForTrainning("heart_scale");
+	public double[] StartGridSearch(String filepath){
+		ss.ReadTrainProblemForTrainning(filepath);
 		double rate,best_rate=0;
 		int c,g,best_c=0,best_g=0;
 		for ( c= c_begin;  c<=c_end; c+=c_step) {
@@ -36,7 +36,7 @@ public class SimpleGridSearch {
 	 */
 	public static void main(String[] args) {
 		SimpleGridSearch sgs=new SimpleGridSearch();
-		double[] re=sgs.StartGridSearch();
+		double[] re=sgs.StartGridSearch("heart_scale");
 		System.out.println("best_rate="+re[0]+" best_c="+re[1]+" best_g="+re[2]);
 	}
 

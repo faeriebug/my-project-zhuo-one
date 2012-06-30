@@ -25,12 +25,13 @@ public abstract class FeatureWeight{
 		try{
 			FileWriter fw=new FileWriter(resultFilePath);
 			int docID=0;// 文本ID在同一目录中递增
+			fw.write(CDM.N+"\n");
 			for(int i=0;i<docs.length;i++){//对每一个类别
 				for(String doc:CDM.getFilesPath(docs[i])){//对每一篇文档
 					//写入特征向量
 					String temp=FeatureVectorOfDoc(FM,dicEx.readAll(doc),docID++,CDM);
 					//System.out.println((i+1)+" "+temp+"\n");
-					fw.write((i+1)+" "+temp+"\n");
+					fw.write((i*2-1)+" "+temp+"\n");
 				}
 			}
 			fw.flush();
@@ -40,33 +41,33 @@ public abstract class FeatureWeight{
 		}
 	}
 	
-	/**
-	 * 分类时使用，无类别信息(类别同一为1)
-	 * 为语料库中所有文件计算特征值，并保存在本地文件(libsvm格式),按照训练模式(即同时输出类别ID)
-	 * @param dicPath 词典目录
-	 * @param libPath 语料库目录，其下存放待分类类的语料。
-	 * @param resultFilePath 保存为libsvm格式的语料文档特征值文件
-	 */
-	public  void CalcFeaturesForAllFiles(FeatureMaker FM,FeatureCounter FC,String dicPath,String libPath,String resultFilePath) {
-		CategorizingDataManager CDM=new CategorizingDataManager(FC,dicPath, libPath,false);
-		Dictionary dicEx=new Dictionary();
-		String[] docs=CDM.getDocs();
-		try{
-			FileWriter fw=new FileWriter(resultFilePath);
-			int docID=0;
-			for(int i=0;i<docs.length;i++){//对每一个类别
-				for(String doc:CDM.getFilesPath(docs[i])){//对每一篇文档
-					//写入特征向量
-					String temp=FeatureVectorOfDoc(FM,dicEx.readAll(doc),docID++,CDM);
-					fw.write(1+" "+temp+"\n");
-				}
-			}
-			fw.flush();
-			fw.close();
-		}catch(IOException e){
-			e.printStackTrace();
-		}
-	}
+//	/**
+//	 * 分类时使用，无类别信息(类别同一为1)
+//	 * 为语料库中所有文件计算特征值，并保存在本地文件(libsvm格式),按照训练模式(即同时输出类别ID)
+//	 * @param dicPath 词典目录
+//	 * @param libPath 语料库目录，其下存放待分类类的语料。
+//	 * @param resultFilePath 保存为libsvm格式的语料文档特征值文件
+//	 */
+//	public  void CalcFeaturesForAllFiles(FeatureMaker FM,FeatureCounter FC,String dicPath,String libPath,String resultFilePath) {
+//		CategorizingDataManager CDM=new CategorizingDataManager(FC,dicPath, libPath,false);
+//		Dictionary dicEx=new Dictionary();
+//		String[] docs=CDM.getDocs();
+//		try{
+//			FileWriter fw=new FileWriter(resultFilePath);
+//			int docID=0;
+//			for(int i=0;i<docs.length;i++){//对每一个类别
+//				for(String doc:CDM.getFilesPath(docs[i])){//对每一篇文档
+//					//写入特征向量
+//					String temp=FeatureVectorOfDoc(FM,dicEx.readAll(doc),docID++,CDM);
+//					fw.write(1+" "+temp+"\n");
+//				}
+//			}
+//			fw.flush();
+//			fw.close();
+//		}catch(IOException e){
+//			e.printStackTrace();
+//		}
+//	}
 	
 	/**
 	 * 计算文档的特征向量
@@ -94,7 +95,6 @@ public abstract class FeatureWeight{
 		Arrays.sort(keys,new Comparator<Integer>() {
 			@Override
 			public int compare(Integer o1, Integer o2) {
-				// TODO Auto-generated method stub
 				return	 o1-o2;
 			}
 		});

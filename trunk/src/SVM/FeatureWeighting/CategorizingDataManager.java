@@ -14,7 +14,7 @@ public class CategorizingDataManager {
 	public  final String dicPath;
 	public  final Map<String, Integer> dic;
 	public  String[] docs;
-	
+	/**<wordID,<docID,freq>>*/
 	private  Map<Integer, Map<Integer, Integer>> cp;
 //	/**词j在文档i中的出现频数*/
 //	public  int tf[][];
@@ -22,7 +22,7 @@ public class CategorizingDataManager {
 //	public  int n[];
 //	/**索引*/
 //	public  Integer key[];
-//	/**文档集的文档总数*/
+	/**文档集的文档总数*/
 	public  int N;
 	/**文档集的词总数*/
 	public  int M;

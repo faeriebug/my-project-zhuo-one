@@ -10,7 +10,8 @@ package SVM.DataClassify;
  * 
  */
 public class TextClsWordFilter implements WordFilter {
-
+	
+//	String[] stopwords=new String[]{"be",};
 	/**
 	 * 如果词典索引不为null，则先在词典中查找该词，存在则继续进行词性过滤，否则，直接过滤掉；
 	 * <p>
@@ -18,10 +19,11 @@ public class TextClsWordFilter implements WordFilter {
 	 */
 	@Override
 	public boolean isStoped(String word, String pos) {
+		
 		// TODO Auto-generated method stub
-		return !(pos.startsWith("N")
-				|| (pos.startsWith("V") && !pos.startsWith("VB")) || pos
-					.startsWith("J"));
+		return !(pos.startsWith("NN")
+				|| (pos.startsWith("VB") && !word.equals("be")) || pos
+					.startsWith("JJ"));
 	}
 
 	/**
