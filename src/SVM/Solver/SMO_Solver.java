@@ -288,7 +288,7 @@ public class SMO_Solver {
 	 * @param filepath
 	 * @return
 	 */
-	public double Predict(String filepath) {
+	public int[] Predict(String filepath) {
 		svmProblem sp = ReadProblem(filepath);
 		int ac = 0;
 		double tar;
@@ -300,10 +300,10 @@ public class SMO_Solver {
 				ac++;
 		}
 		// System.out.println("¾«È·¶È£º" + accuracy * 100 + "£¥");
-		return (double) ac / target.length;
+		return new int[]{ac, sp.target.length};
 	}
 
-	double test() {
+	int[] test() {
 		return Predict("heart_scale");
 	}
 
