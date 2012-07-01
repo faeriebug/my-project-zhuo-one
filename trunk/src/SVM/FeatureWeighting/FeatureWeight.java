@@ -25,7 +25,7 @@ public abstract class FeatureWeight{
 		try{
 			FileWriter fw=new FileWriter(resultFilePath);
 			int docID=0;// 文本ID在同一目录中递增
-			fw.write(CDM.N+"\n");
+//			fw.write(CDM.N+"\n");
 			for(int i=0;i<docs.length;i++){//对每一个类别
 				for(String doc:CDM.getFilesPath(docs[i])){//对每一篇文档
 					//写入特征向量
