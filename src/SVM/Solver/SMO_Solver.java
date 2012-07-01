@@ -1,7 +1,9 @@
 package SVM.Solver;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Random;
 import java.util.StringTokenizer;
@@ -295,13 +297,53 @@ public class SMO_Solver {
 		// .println("----------------------------测试结果------------------------------");
 		for (int i = 0; i < sp.target.length; i++) {
 			tar = learned_func_nonlinear(sp.dense_points[i]);
-			if ((tar > 0 && sp.target[i] > 0) || (tar < 0 && sp.target[i] < 0))
+			if ((tar > 0 && sp.target[i] > 0) || (tar < 0 && sp.target[i] < 0)){
 				ac++;
+				System.out.println(sp.target[i]);
+			}
 		}
 		// System.out.println("精确度：" + accuracy * 100 + "％");
 		return new int[]{ac, sp.target.length};
 	}
 
+	/**
+	 * 由Feedback需要而写的函数
+	 * 根据对自身的预测测试结果进行删减并训练。
+	 * @param filepath
+	 * @return
+	 */
+	public String PredictCut(String filepath){
+		svmProblem sp = ReadProblem(filepath);
+		double tar;
+		// System.out
+		// .println("----------------------------测试结果------------------------------");
+		for (int i = 0; i < sp.target.length; i++) {
+			tar = learned_func_nonlinear(sp.dense_points[i]);
+			if (!(tar > 0 && sp.target[i] > 0) && !(tar < 0 && sp.target[i] < 0)){//即预测错误的向量
+				sp.target[i]=-sp.target[i];//直接改变类别
+			}
+		}
+		probToFile(filepath+"_",sp);
+		// System.out.println("精确度：" + accuracy * 100 + "％");
+//		return new int[]{ac, sp.target.length};
+		return filepath+"_";
+	}
+	
+	private void probToFile(String fileName,svmProblem sp){
+		try(BufferedWriter bw=new BufferedWriter(new FileWriter(fileName))){
+			bw.write(sp.target.length+"\n");
+			for (int i = 0; i < sp.dense_points.length; i++) {
+				bw.write(sp.target[i]+"");
+				for (int j = 0; j < sp.dense_points[i].length; j++) {
+					bw.write(" "+sp.dense_points[i][j].d+":"+sp.dense_points[i][j].value);
+				}
+				bw.write("\n");
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	int[] test() {
 		return Predict("heart_scale");
 	}

@@ -5,8 +5,11 @@ import java.io.IOException;
 
 import SVM.FeatureSelection.*;
 import SVM.FeatureWeighting.*;
-import SVM.Solver.GridSearch;
-import SVM.Solver.SMO_Solver;
+import SVM.Solver.process.GridSearch;
+import SVM.Solver.process.svm_predict;
+import SVM.Solver.process.svm_train;
+//import SVM.Solver.GridSearch;
+//import SVM.Solver.SMO_Solver;
 import SVM.Subject.SubjectFeatureCounter;
 import SVM.Subject.SubjectFeatureMaker;
 
@@ -28,74 +31,106 @@ public class SubjectTest {
 				.write("FeatureDictionary+FeatureNumber+TrainingFeaturesCalc+Accuracy\n");
 		double count = 0, total = FeatureDictionary.length
 				* TrainingFeaturesCalc.length * wordNum.length;
-		long start, end;
+		long init,start, end;
 		double timepast = 0, timeneed = 0;
 		SubjectFeatureMaker SF = new SubjectFeatureMaker();
 		SubjectFeatureCounter SFC = new SubjectFeatureCounter();
 		for (FeatureSelection FS : FeatureDictionary) {
 			for (int wNr : wordNum) {
-				System.out.println(">>" + FS.getName()
-						+ " is constructing dictionary>word number:" + wNr);
+				System.out.println(">>Feature selection: " + FS.getName()
+						+ ". feature number:" + wNr);
+				start = System.currentTimeMillis();
 				FS.ConstructFeatureDictionary(SF, "ClsTest\\Train\\",
 						"ClsTest\\Result\\FeatureDictionary", wNr);
+				System.out.println("\t>>finished. time cost:"
+						+ (System.currentTimeMillis() - start) / 1000.0 + "s");
 				for (FeatureWeight FC : TrainingFeaturesCalc) {
-					// for(FeatureWeight FW:TestingFeatureCalc){
-					System.out
-							.printf("finish:%.2f%%  Time past:%.2f h  Time needs:%.2f h\n",
-									(count++) / total * 100,
-									timepast / 1000 / 60 / 60,
-									timeneed / 1000 / 60 / 60);
-					start = System.currentTimeMillis();
-					System.out.print("\t>>" + FC.getName()
+					System.out.println(">>Feature weighting: " + FC.getName()
 							+ " is calculating training Feature vector");
+					init=start = System.currentTimeMillis();
 					FC.CalcFeaturesForAllFiles_Training(SF, SFC,
 							"ClsTest\\Result\\FeatureDictionary",
 							"ClsTest\\Train\\",
 							"ClsTest\\Result\\CategoriedFiles");
-					System.out.println("->finished");
-					System.out.print("\t>>" + FC.getName()
+					System.out.println("\t>>finished. time cost:"+(System.currentTimeMillis() - start)/1000.0 + " s");
+					
+					System.out.println(">>Feature weighting: " + FC.getName()
 							+ " is calculating testing Feature vector");
+					start = System.currentTimeMillis();
 					FC.CalcFeaturesForAllFiles_Training(SF, SFC,
 							"ClsTest\\Result\\FeatureDictionary",
 							"ClsTest\\Test\\", "ClsTest\\Result\\TestFiles");
-					System.out.println("->finished");
-
-					// argv=new
-					// String[]{"Test\\SubjectTest\\Result\\TestFiles","Test\\SubjectTest\\Result\\CategoriedFiles.model","Test\\SubjectTest\\Result\\TestFiles.out"};
-					// System.out.println("->finished");
-					// System.out.printf("\t%s--%d--%s:  %d/%d,%.2f%%\n\n",
-					// FS.getName(),wNr,FC.getName(),tmp[0],tmp[1],100.0*tmp[0]/tmp[1]);
-					// fileWriter.write(FS.getName()+"+"+wNr+"+"+FC.getName()+"+"+tmp[0]+"/"+tmp[1]+"+"+(100.0*tmp[0]/tmp[1])+"\n");
-					int[] tmp = null;
+					System.out.println("\t>>finished. time cost:"+(System.currentTimeMillis() - start) /1000.0 + " s");
+					
+					System.out.println(">>Grid search");
+					String[] args = new String[] { "ClsTest\\Result\\CategoriedFiles" };
+					GridSearch GS = new GridSearch();
+					start = System.currentTimeMillis();
+					double[] t = GS.ParameterSelection(args);
+					System.out.println("\t>>finished. time cost:"+(System.currentTimeMillis() - start) /1000.0 + " s");
+					
+					String[] argv;
+					svm_train svmtrain = new svm_train();
 					try {
-						GridSearch gs = new GridSearch();
-						System.out.print("\t>>Grid search");
-						double[] t = gs
-								.ParameterSelection("ClsTest\\Result\\CategoriedFiles");
-						// String[] argv;
-						SMO_Solver ss = new SMO_Solver();
-						ss.ReadTrainProblemForTrainning("ClsTest\\Result\\CategoriedFiles");
-						System.out.println("finish read problem");
-						ss.Train(t[0], t[1]);
-						System.out.println("finish train");
-						tmp = ss.Predict("ClsTest\\Result\\TestFiles");
-						System.out.println("finish predict");
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
+						argv = new String[] { "-c", Double.toString(t[0]),
+								"-g", Double.toString(t[1]),
+								"ClsTest\\Result\\CategoriedFiles" };
+						System.out.println(">>SVM train");
+						start = System.currentTimeMillis();
+						svmtrain.run(argv);
+						System.out.println("\t>>finished. time cost:"+(System.currentTimeMillis() - start) /1000.0 + " s");
+						
+						System.out.println(">>Feedback testing");
+						start = System.currentTimeMillis();
+						argv = new String[] {
+								"ClsTest\\Result\\CategoriedFiles",
+								"ClsTest\\Result\\CategoriedFiles.model",
+								"ClsTest\\Result\\CategoriedFiles.out" };
+						String file = svm_predict.Feedback(argv);
+						System.out.println("\t>>finished. time cost:"+(System.currentTimeMillis() - start) /1000.0 + " s");
+						if (file != null) {
+//							System.out.println(">>begin to feedback!");
+							args = new String[] { file };
+							start = System.currentTimeMillis();
+							t = GS.ParameterSelection(args);
+							argv = new String[] { "-c", Double.toString(t[0]),
+									"-g", Double.toString(t[1]), file };
+							svmtrain.run(argv);
+							System.out.println("\t>>finished. time cost:"+(System.currentTimeMillis() - start) /1000.0 + " s");
+						} else {
+//							System.out.println(">>no need to feedback");
+							file = "ClsTest\\Result\\CategoriedFiles";
+						}
+						file += ".model";
+						
+						System.out.println(">>svm Predict");
+						start = System.currentTimeMillis();
+						argv = new String[] { "ClsTest\\Result\\TestFiles",
+								file, "ClsTest\\Result\\TestFiles.out" };
+						int[] tmp = svm_predict.Init(argv);
+						System.out.println("\t>>finished. time cost:"+(System.currentTimeMillis() - start) /1000.0 + " s");
+						System.out.println("\t>>result: "+tmp[0] + "/" + tmp[1]+" accuracy="+1.0*tmp[0]/tmp[1]*100+"%");
+
+						fileWriter.write(FS.getName() + "+" + wNr + "+"
+								+ FC.getName() + "+" + tmp[0] + "/" + tmp[1]
+								+ "+" + (100.0 * tmp[0] / tmp[1]) + "\n");
+						fileWriter.flush();
+						end = System.currentTimeMillis();
+						timepast += end - init;
+						timeneed = (long) (total - ++count) * (end - init);
+					} catch (IOException e) {
 						e.printStackTrace();
 					}
-					fileWriter.write(FS.getName() + "+" + wNr + "+"
-							+ FC.getName() + "+" + tmp[0] + "/" + tmp[1] + "+"
-							+ (100.0 * tmp[0] / tmp[1]) + "\n");
-					fileWriter.flush();
-					end = System.currentTimeMillis();
-					timepast += end - start;
-					timeneed = (long) (total - count) * (end - start);
-					// }
+					System.out
+							.printf("finish:%.2f%%  Time past:%.2f h  Time needs:%.2f h\n",
+									(count) / total * 100,
+									timepast / 1000 / 60 / 60,
+									timeneed / 1000 / 60 / 60);
 				}
+				
 			}
+			System.out.println("calculating finished.");
 		}
-		System.out.println("calculating finished.");
 		fileWriter.close();
 	}
 
@@ -104,24 +139,20 @@ public class SubjectTest {
 	 */
 	public static void main(String[] args) {
 		// 构建特征词典的类数组
-		FeatureSelection[] FeatureDictionary = new FeatureSelection[] {
-				new ChiSqrWordSelection(),
-				new InformationGainWordSelection(), new LocalDFWordSelection() };
+		FeatureSelection[] FeatureDictionary = new FeatureSelection[] { new GlobalDFWordSelection() };
 		// 计算训练语料库特征向量的类数组
-		FeatureWeight[] TrainingFeaturesCalc = new FeatureWeight[] { new TF_IDFWeighting(),new LTCWeighting(), new TFCWeighting(),new TFWeighting(),};
+		FeatureWeight[] TrainingFeaturesCalc = new FeatureWeight[] { new TF_IDFWeighting() };
 		// //计算测试语料特征向量的类数组
 		// FeatureWeight[] TestingFeatureCalc=new FeatureWeight[]{new
 		// TFCWeighting(),new TFWeighting()};
 		// 特征词选择的数量
-		int[] wordNum = new int[] { 500, 1000, 1500, 2000, 2500, 3000, 3500,
-				4000 };
+		int[] wordNum = new int[] { 100 };
 
 		SubjectTest AT = new SubjectTest(FeatureDictionary,
 				TrainingFeaturesCalc, wordNum);
 		try {
 			AT.StartTesting();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
